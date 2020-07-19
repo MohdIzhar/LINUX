@@ -1,0 +1,311 @@
+#setting an environment in linux:-
+-> env  					  	// to check the environment set up in os
+-> env <variable name or cmd>="value"  		  	// to add environment in system
+-> export env <variable name or command>="value" 	// to start using setup environment 
+-> env -u <variable name or cmd>                 	// to unset the environment 
+* $ or * wild cards
+
+-> ls [options] [path]					// listing cmds
+-> ls -l						// long listing
+-> ls -a						// to list hidden files and folder
+-> ls -i 						// to list inode of files or folder
+-> ls -r						// to list in reverse order (ascending order)
+-> ls -t						// to list according to time
+-> ls -h						// to list in human readable format
+* inode is basically a linked list data structure
+
+-> cd 							// change directory
+-> pwd							// present working directory
+-> cat <file name>					// to see content of file
+-> cat <filename1> <filename2> > <filename>		// to merge two files content
+-> rm [options] <filename> 				// to remove file
+-> rm -f <filename>					// to remove file forcefully
+-> rmdir <directory name>				// to delete the directory
+-> rm -rf <directory name> 				// to recursively delete directory with forcefully
+
+-> history	(or !h)					// to list cmds history 
+* user's history run cmds location 
+/home/username/.bash_history
+
+-> touch <filename> 					// to create an empty file
+-> cp [options] <filename or directoryname> 		// to copy file or directory
+-> cp -rf <diractoryname>				// to copy directory
+-> mv <filename> <newfilename>				// to rename file
+
+-> who							// to check all users logged in
+-> whoami						// to chech current user
+-> ifconfig or ip addr					// to check system ip address
+-> ssh username@ip					// to connect via ip remote access
+-> tty							// to check the terminal path (terminal type)
+-> which <cmd>						// to chech the command path
+-> locate <filename or folder>				// to get all location of files and folder with that name
+* which cd 						// doesnt return anything
+* which <which>
+** inbuilt cmds doesnt return the path
+
+-> cal [options]					// calender in linux
+-> cal 2020						// show all month of that year
+-> cal 03 2020						// shows the month of specified number year
+-> date [options]					// date in liux
+-> date -u						// universal date and time
+-> date +"%T"						// display only time
+-> date +"%B"						// display month name full
+-> date +"%d"						// current date
+-> date +"%D"						// half date fomat
+-> date +"%F"						// full date format
+-> date +"%m%d%H%M%Y.%S"				// to see the new format
+-> date <omitted output of previous cmd>		// to set new pattern of date 
+-> time							// to check the execution time
+-> time <filename>
+----------------------------------------------------------------------------------------------
+->  bg %[jobid] 					// to run job behind the system
+-> fg %[jobid] 						// to run job on stdout
+-> jobs 						// list the running or stopped or paused jobs
+-> sort	[filename]					// to sort in ascending order
+-> sort -u						// to remove duplicate values
+-> sort -n 						// to sort the numerical values
+-> sort -r						// sort in descending order
+-> uniq							// cmd to remove duplicate values that come togther
+** sort -nm [filename] | uinq
+
+-------------------------------------------------------------------------------------------------------
+-> top 							// to get the system running processes like task manager in windows
+-> top -b -n 1>file.txt					// b(batch mode) -> not to block console, 1 number of iteration
+
+-> ps -ef 						// to list all process status
+-> ps auxwww						// to get detail of processes
+-> ps -eLf						// to get more columns
+
+** to discard data rediect to /dev/null as >/dev/null // character device
+------------------------------------------------------------------------------------------------------------------
+-> exec 3<> filename					// opens filedescriptor 3 and redirects all output
+-> wc [options]						// word count
+-> tee [options] <filename> 				// to redirect output to screen and save in file too
+
+=> wild cards
+->  ?							// denote single character
+->  ???? 						// to specify number of character of that filename size
+-> *							// every thing or all
+-> []							// represent range
+-> ls m[a-d]m						// file start with m and end with n having charcter including a to d
+-> {*.doc,*.pdf}					// match all doc file and pdf file
+-> [!9]							// ignore 9 or dont match 9
+-> \							// string literal skip 
+-> touch \\ 						// to create a file name \
+-> find [path] -name <file to be find>			// to find file in specific directory
+-> find . -iname "*.cpp"				// find ignoring cases file with extension .cpp
+-> find . -maxdepth 2 -iname ".cpp"			// to get in 2nd directory i.e maxdepth
+-> find . -maxdepth 2 not -iname ".cpp"
+-> find . -maxdepth 2 not -iname ".cpp" -o -iname ".h"  // or include file with .h [-o = or]
+-> find . -maxdepth 2 not -iname ".cpp" -a -iname ".h"  // or include file with .h [-a = and]
+-> find . -type f -name "abc"				// to find file [regular file = f]
+-> find . -type d -name "abc"				// to find directory with name abc
+-> find / /hom/path -type f -name "abc"			// to find in two path
+-> find . -type f -name ".*"				// to find hidden files
+-> find . -type f ! -perm 0777 				// files with not permission 0777
+-> find / -perm /u=r					// u = user r = read permission 
+-> find / -atime 10					// list all file access in last 10day
+-> find / -atime +10 -mtime -100			// list all file [m = modified] access in between 10-100 days
+-> find / -cmin 10					// in last 10 min [c = change of status]
+-> find / -size 50M					// file size of 50 mib
+-> find / -size +50M -size -100M
+-> find / -type f -empty				// to find empty file
+-------------------------------------------------------------------------------------------------------
+-> grep [options] "pattern"				// pattern matching
+-> awk {print <column name>} 				// to print column value
+-> ethtool [interface name say enp0s3]			// to get detail of ethernet
+-> grep -rih "pattern" <filename>			// h = to remove filename and show content
+-> grep -riw "pattern" <filename> 			// to match exact pattern
+-> grep -E 'pattern1 | pattern2' <filename>		// to find both pattern (extended grep)
+-> grep -E 'pattern1 | pattern2' --color=always <filename> // to highlight matched pattern
+-> grep -c 'pattern' <filename> 			// to count number of matched pattern
+-> grep -l 'pattern' <filename>				// to get list of file containing pattern
+-> grep '[0-9] [0-9] [0-9]' <filename>			// finding pattern with range limit
+
+*** cat /proc/cpuinfo
+-> read [options]					// to read input from user
+-> read n2						// to read atleast two character
+
+----------------------------------------------------------------------------------------------
+exit status of cmds
+-> ls -l
+-> echo $? [o/p = 0]					// to check exit status of previous command
+-> ls -l <filename>; echo $?
+
+status 0 denotes successful, 2 means some error
+#!/bin/bash
+ls -l ./abc.txt
+if [ $? -ne 0 ]
+then 
+	exit 4
+fi
+./exit_t.sh
+if [$? -ne 0 ]
+then
+	exit 5
+fi
+
+echo "This is the normal termination"
+exit 0
+****** exit range -> 0-255 and should not be negative otherwise it will wrap it in positive
+EXIT_EPERM = 2
+EXIT_EACCESS = 3
+EXIT_SUCCESS = 0
+--------------------------------------------------------------------------------------------------
+
+-> echo $RANDOM 					// to get random number 
+
+for i in 'seq 1 20`
+do 
+	echo $((RANDOM%1000))				// to get 20 random number between 1 to 1000
+done
+---------------------------------------------------------------------------------------------------
+arrays in bash 
+
+#!/bin/bash
+declare -a var
+var[0]="hi"
+var[1]="apple"
+var[2]="red"
+echo ${var[0]}
+echo ${var[1]}
+echo ${var[2]}
+
+OR
+
+#!/bin/bash
+array_var = ("my" "shell" "script")
+echo ${array_var[0]}
+echo ${array_var[1]}
+echo ${array_var[2]}
+
+OR 
+
+#!/bin/bash
+array_var = ([0]="mohd" [1]="izhar" script)
+echo ${array_var[0]}
+echo ${array_var[1]}
+echo ${array_var[2]}
+
+OR
+
+echo "Please enter the ip addresses separated by space"
+read -a ip_list							// to read as an array
+for i in ${ip_list[@]}						// to read entire element of an array and split each as one @ = each
+do
+	echo "--------------------------"
+	ping -c 1 -w 3 $i 2>&1 >/dev/null			// -w timeout i.e. 3 seconds
+	##ping -c 1 -w 3 $i					// try to run again after running script uncomment first
+	if [$? -eq 0]
+	then
+		echo "Host $i is active"
+	else
+		echo "Host $i is down"
+	fi
+done
+	
+#!/bin/bash
+output =$(cat /etc/passwd | awk -F':' '{print $1}')		// -F to specify field separator, $1 = column 1
+for i in ${output[$@]}						// $@ to get to know about the indices itself
+do 	
+echo "username ${i}
+done
+
+----------------------------------------------------------------------------------------------------------
+network utility available in all os including windows
+-> tcpdump -i enp0s3						// -i interface name 
+-> tcpdump -i enp0s3 -n dst 'ipaddress				// -n network dst = destination					
+-> tcpdump -i enp0s3 -s 0 -vvv -w tcp_txt.pcap			// to capture incoming request in pcap file -w = write -v = verbose more and more as many times we want
+-> ls -l
+-> tcpdump -qns 0 -X -r tcp_txt.pcap				// converting pcap file in readable format
+* pcap is binary file
+-> tcpdump -i enp0s3 tcp -n -w mydata.txt			// tcp = filter out only tcp connection network
+-> tcpdump -r mydata.txt					// to convert binary data into ascii
+
+-> nmap 							// security scanner and port mapping to check open port, vulnerability check
+# installing nmap by default not installed
+-> nmap -T4  -A -v <ipaddress or route ip>			// timing T range [0-5] -A hostname
+----------------------------------------------------------------------------------
+-> dmsg
+-> fdisk -l
+-> lscpu or cat /proc/cpuinfo
+-> lsusb 
+-> lspci 
+-> dmidecode							// desktop management interface -> to get bios information
+-> dmidecode -t bios
+-> dmidecode -t processor
+-> dmidecode -s system-version
+-> dmidecode -s system-serial-number
+-> dmidecode -t <number> 					// see manual to check number
+----------------------------------------------------------------------------------------------------------------------
+
+-> here document as:-
+<< EOF
+hi this is izhar 
+EOF 			// this must start at the starting of line no space 
+---------------------------------------------------------------------------------------
+=> signal and trap
+-> kill -l 					// to list all signals
+-> trap <somecommand> signal1 signal2		// to catch some signal
+-> example
+#!/bin/bash
+while:
+do 
+echo "izhar"
+sleep 1
+done
+
+ctrl + c is a type of signal 
+
+Now modify the above file as :
+#!/bin/bash
+trap 'echo hey you are trying to kill me' SIGINT //to handle interrput
+while:
+do 
+echo "izhar"
+sleep 1
+done
+
+*replace SIGINT to SIGHUP
+** SIGKILL is only which cant be trapped
+
+function cleanup()
+{
+echo " recieved signal"
+echo "clean up code"
+echo "signals recieved is $1"
+}
+trap 'cleanup SIGINT; exit 1' SIGINT
+trap 'cleanup SIGHUP; exit 1' SIGHUP
+trap 'cleanup SIGILL; exit 1' SIGILL
+while:
+do
+	echo "hi izhar"
+	sleep 1
+done
+-----------------------------------------------------------------------------------------------
+
+-> dd							// convert or copy file
+-> dd -if=/dev/zero -of=/hi.txt bs=1024 count=512	// if = input file, of = output file, bs = block size (bytes) file szie = bs * count
+*** dd is also used to format disk so be aware while using
+-> od 							// to get ascii data of file
+-> od -Ax -cx <filename> or od -cx <filename>		// Ax = hexadecimal 
+-> df							// disk free space
+-> du 							// disk usage
+-> df -h or -k						// human readable format
+-> lsof							// list of open file
+------------------------------------------------------------------------------------------------------
+-> vim test.sh
+USER=$1
+HOST=$2
+CMD=$3
+
+function runCommandOnHost(){
+	echo "Running \"${CMD}\" on ${HOST}"
+	ssh ${USER}@${HOST} "${CMD}"
+}
+for HOST in `cat ${HOST}`;
+do
+runCommandOnHost ${USER} ${HOST} ${CMD}
+done
+
