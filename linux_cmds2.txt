@@ -1,0 +1,150 @@
+-> IDENTIFYING SYSTEM RESOURCE USAGE
+
+- cd /proc			// contains files generated at run time
+- ls
+- ps aux | grep process_id	
+- ls process_id
+- journalctl _PID=7644		// to get detail of process running
+- journal _PID=7644
+- ls -p | grep -v / | column	// to list the directories in column wise
+- less cpuinfo			// details of CPU
+- less cpuinfo | grep processor	// to list number of processor
+- cat uptime			// will show the two numbers seconds uptime and second will sum of seconds
+- uptime			// current time since last boot in human readable format
+- less filesystem		// contains all the filesystem that kernel supports
+- less meminfo			// gives info of RAM in detail
+- free -h 			// memory info in human readable form
+
+___________________________________________________________________________________________________________________
+
+-> STORAGE AND NETWORK BANDWIDTH METRICS
+
+- df				// display deatils of disk in total
+- df -h				// human readable format
+- df -t ext4			// to limit the filesystem format result
+- df -i 			// inode metadata of filesystem
+- df -ih			// human readable form
+
+- ip a				// to get detail of ip and network interface
+- iftop -i enp0s3		// to check the bandwidth of network interface
+- ping ip			// to check network connectivity
+- nethogs			// to get top network traffics
+- curl www.amazon.com		// to check the nethogs demo
+
+_______________________________________________________________________________________________________________________
+
+-> SYSTEM MONITORING SOLUTIONS
+
+- collectd, nagios, munin, Nmon	// monitoring tools in linux
+collectd - remote browser based data collection
+nagios - heavily customizable
+Munin - forensics analysis
+Nmon - SSH based visualization
+- systat tool			 // for user capturing data
+cockpit - admin based monitoring // user interface for linux servers
+
+- yum install cockpit -y 	-- default port number 9090
+- systemctl start cockpit
+- systemctl enable --now cockpit
+
+___________________________________________________________________________________________________________________________
+
+-> CONTROLLING SYSTEM RESOURCE USAGE
+
+- systemctl status servicename	// to check the status of any service
+- yes >/dev/null &		// running the yes program in background 
+- kill pid			// to kill the running process
+- killall process_name		// to kill all the process of same name in one instance
+____________________________________________________________________________________________________________________________
+
+- uname -a			// some kernel info
+- dmidecode - Desktop Management Interface // hardware profile (SMBIOS)
+- dmidecode -q | less		// will show the BIOS info
+- lshw				// list hardware
+- lshw -C disk			// to restrict device
+- lshw -short			// detail info
+_____________________________________________________________________________________________________________________________
+
+-> KERNEL INFO
+
+- cd /boot			// location of kernel boot, grub,etc
+- ls
+- vim /etc/defaults/grub	// grub info and behaviour older version
+- vim /boot/grub/grub.cfg	// grub config file
+- rpm -q kernel			// checking kernel version
+ 
+_______________________________________________________________________________________________________________________________
+
+-> CREATING RPM SOFTWARE PACKAGE
+
+- yum install rpm-build -y
+- echo '%_topdir %(echo $HOME)/rpmbuild' >~/.rpmmacros	// creating hidden file
+- ls -a							// u will see hidden directory of rpmmacros
+- mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+- tree
+- mkdir helloworld-1.0
+- vim helloworld-1.0/main.c
+#include <stdio.h>
+int main (int argc, char *argv[]){
+	printf("My first package");
+	return 0;
+}
+- vim helloworld-1.0/MakeFile
+DESTDIR ?=
+PREFIX ?= /usr/local
+
+helloworld:
+	gcc main.c -o helloworld
+
+install: helloworld
+	install -m 0755 -d $(DESTDIR)$(PREIFIX)/bin
+	install -m 0755 helloworld $(DESTDIR)$(PREIFIX)/bin
+- cd helloworld-1.0
+- ls
+- make
+- ls
+- ./helloworld
+- make install
+- rm -rf /usr/local/bin/helloworld		// deleting local bin directory
+- cd ..
+- ls
+- tar czvf helloworld-1.0.tar.gz helloworld-1.0/
+- cp helloworld-1.0.tar.gz ~/rpmbuild/SOURCES/
+- vim helloworld.spec				// to create metadata
+Name: helloworld
+Version: 1.0
+Release: 1%{?DIST}
+Summary: A hello world RPM pgm
+
+License: GPLv3+
+URL: https://bootstrap-it.com
+Source0: helloworld-1.0-tar.gz
+
+Requires(post): info
+Requires(preun): info
+
+%description
+helloworld from izhar
+
+%global debug_package %{nil}
+%prep
+
+%build
+make PREFIX=/usr %{?_smp_mflags}
+
+%install
+make PREFIX=/usr DESTDIR=%{?buildroot} install
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%{_bindir}/helloworld
+
+- rpmbuild -ba helloworld.spec
+
+____________________________________________________________________________________________________
+
+
+
+
