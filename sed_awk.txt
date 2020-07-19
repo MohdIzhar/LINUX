@@ -1,0 +1,262 @@
+-> sed 'p' /etc/passwd				// to print each pattern two times
+-> sed -n 'p' /etc/passwd			// to suppress each pattern
+-> sed -n ' 1,5 p ' /etc/passwd			// to print first 5 lines
+-> sed -n ' /^user/ p' /etc/passwd		// to search specific pattern line
+-> sed ' /^#/ d' /etc/ntp.conf			// to delete lines which are commented
+-> sed ' /^#/ d ; /^$/ d' /etc/ntp.conf		// to delete empty lines in file (/^$/ d)
+
+* the above changes are temporary so make them permanent in file
+-> cat /etc/ntp.conf
+-> sed -i.bak ' /^#/ d ; /^$/ d' /etc/ntp.conf	// bak is to take backup of file
+-> cat /etc/ntp.conf
+-> cat /etc/ntp.conf.bak
+
+----------------
+# AWK COMMAND #
+---------------
+
+-> awk -W version				// checking the version
+-> awk ' { print } ' /etc/ntp.conf		// demo
+
+-> awk ' BEGIN { print "ntp.conf" } { print } END { print NR } ' /etc/ntp.conf
+-> awk ' BEGIN { print "ntp.conf" } { print NR, $0 } END { print NR } ' /etc/ntp.conf
+   $0 - whole line
+   NR - to print row number
+
+-> ifconfig enp0s3 | awk -F":" '/HWaddr/{print $3 $4 $5 $6 $7}'	// retrieving mac address
+-> ifconfig enp0s3 | awk -F":" '/HWaddr/{print toupper($3 $4 $5 $6 $7)}'	// making upper case result
+    -F - field delimeter
+
+-> grep -c name /proc/cpuinfo
+
+# Parse CSV file
+
+#!/bin/bash
+OLDFIS=$IFS IFS=','
+while read product price quantity
+do
+	echo -e "\e[1;33m$product ===========\e[0m\n\
+	Price : \t $price \n\
+	Quantity: \t $quantity \n"
+done < $1
+IFS=$OLDIFS
+
+./parsecsv.sh tools | grep -A2 hammer			// tools is csv file (-A2 number of lines i want after matching pattern)
+
+----------------------
+# REGULAR EXPRESSION #
+----------------------
+
+[] - Range Specifier
+^  - Start of String
+$  - End of String
+\s - whitespace
+\b - word boundary
+* - match zero or more times
+? - match exactly zero or once time
++ - matches one or more occurences
+{3} - exactly three occurences
+
+Ex: '^root' - string start with root, '4$' - string end with 4
+     '\ssytem' -  matches "file system", '\bsystem' - matches "file-system"
+
+-> grep '^server' /etc/ntp.conf.bak
+-> grep '4$' /etc/logrotate.d/*
+-> grep '^$' /etc/ntp.conf.bak
+-> grep -v '^$' /etc/ntp.conf.bak
+-> grep -vet '^$' /etc/ntp.conf.bak
+-> grep 'rotate [46]$' /etc/logrotate.d/*		// either pattern ends with 4 or 6
+-> grep 'rotate [^4]$' /etc/logrotate.d/*		// to negelect 4 in result from ranges
+-> grep '[Ss]erver' /etc/ntp.conf.bak
+-> grep 'server\b' /etc/ntp.conf.bak			// to search exact match
+-> grep 'server\s' /etc/ntp.conf.bak
+-> grep 'server\S' /etc/ntp.conf.bak
+-> grep '\bpop[0-9]\b' /etc/services
+-> grep '\Bpop[0-9]\b' /etc/services
+-> grep 'pop[0-9]\B' /etc/services
+
+------------------------------------------------------------------------------------------------
+
+# substitute SED COMMAND
+
+-> nl <filename> 					// to number lines in file
+-> sed ' 6,9 s/^/    /g' <filename>
+-> sed -n ' 6,9 s/^/    /p' <filename>
+-> sed -n ' /^gret/ s@/bin/bash@/bin/sh@p' /etc/passwd	// substituting in place of /bin/bash - /bin/sh
+* delimiter must be specified in substituting
+
+# Using sed Append(a), Insert(i), Delete(d) commands
+
+-> sed '/^server 3/ a server ntp.example.com' /etc/ntp.conf	// appending using sed
+-> sed '/^server 3/ i server ntp.example.com' /etc/ntp.conf	// inserting using sed
+-> sed '/^server\s[0-9]\.ubuntu/d' /etc/ntp.conf		// deleting using sed
+
+* be carefull while deleting its better to specify range or pattern to delete
+
+# Multiple SED Commands
+
+-> sed ' {
+/^server 0/i server ntp.example.com
+/^server\s[0-9]/d
+} ' /etc/ntp.conf
+
+* creating a sed script
+
+-> cat ntp.sed 					// extension can be any just for reference i have used .sed
+   /^$/d
+   /^\s*#/d
+   /^server 0/i server ntp.example.com prefer
+   /^server\s[0-9]\.ubuntu/d
+
+-> sed -f ntp.sed /etc/ntp.conf			// applying script to file
+-> sed -i.bak -f ntp.sed /etc/ntp.conf
+
+# SED over SSH CMD
+
+-> ssh -t user@server sudo sed -i.bak -f /tmp/ntp.sed /etc/ntp.conf
+   -t - assigns a tty allowing for sudo passwd
+   /tmp/ntp.sed - location of sed file on remote server
+
+-------------------------------------------------------------------------------------------------------------
+
+# EXECUTING COMMANDS WITH SED
+
+-> sed 's/^/ls -l /e' listoffiles.txt
+-> cat user.list
+   gwen, monty
+-> sed ' s/^/useradd /e ' user.list
+-> tail -n 2 /etc/passwd
+-> sed ' s/^/userdel -r /e ' user.list
+
+--------------------------------------------------------------------------------------------------------------
+
+-----------
+# AWK CMD #
+-----------
+
+-> cat users.awk 
+   { print $1 }
+-> awk -f users.awk /etc/passwd
+-> awk -F":" -f users.awk /etc/passwd				// specifying delimeter
+-> vi users.awk
+   BEGIN { FS=":"; print "Username" }
+   { print $1 }
+-> awk -f users.awk /etc/passwd
+-> vi users.awk
+   BEGIN { FS=":"; print "Username" }
+   $3 > 999 { print $1 }
+   END { print "Total Users : " NR }
+-> awk -f users.awk /etc/passwd
+-> vi users.awk
+   BEGIN { FS=":"; print "Username" }
+   $3 > 999 { print $1; count++ }
+   END { print "Total Users : " count }
+-> awk -f users.awk /etc/passwd
+-> cat users.awk
+-> vi users.awk
+   BEGIN { FS=":"; print "Username" }
+   /^s/{ print $1; count++ }
+   END { print "Total Users : " NR }
+-> awk -f users.awk /etc/passwd
+ 
+
+* for other dataset
+
+-> awk -F"," { print toupper($1), tolower($2), $3 } employees	// fields = $1,$2,$3
+-> sed 's@\([^,]*\),\([^,]*\)@\U\1\L\2@' employees
+-> cat employees
+   Jones,Bob,232-78-3456
+   Jackeson,Jane,,
+   Federer,Jack,xxx-xx-xxx
+   Maw,Michael,1879-0
+   Alexander,Sally,345-89-8095
+   Beder,Ioana,567-34-9802
+   Staines,Brad,,
+-> awk -F"," ' { print $1, $2, $3 }' employees			// by default separated with space as output
+-> awk -F"," { print toupper($1), tolower($2), $3 } employees
+
+* lastlog analysis
+
+-> lastlog -u root
+-> lastlog -b 90					// account not logged in last 90 days
+-> cat lastlog.awk
+   BEGIN {
+   printf "%8s %11s\n","Username","Login date"
+   print "==================================="
+   }
+   !(/Never logged in || /^Username/ || /^root/) {
+   cnt++
+   if(NF ==8)
+     printf "%8s %2s %3s %4s\n", $1,$5,$4,$8
+   else
+     printf "%8s %2s %3s %4s\n", $1,$6,$5,$9
+   }
+   END {
+   print "====================================="
+   print "Total Number of Users Processed: ", cnt
+   }
+-> lastlog | awk -f lastlog.awk
+
+--------------------------------------------------------------------------------------------------
+
+# Analyzing Web Logs using AWK
+
+-> Understanding the schema
+
+Field 1 - Client IP
+Field 2/3 - Identd and Userid
+Field 4/5 - Time and Time Zone
+Field 6/7/8 - Method, file, Protocol
+Field 9 - Status Code
+Field 10 - Size
+
+-> awk ' { print $1 } ' access.log
+-> awk ' { print $9 } ' access.log
+-> awk ' $9 == 404 { print $0 } ' access.log			// print all the details of status code 404
+-> awk ' { print $1 }' access.log
+
+* counting the unique acces by client
+
+-> cat count.awk
+   BEGIN { FS=" ";print "Log access" }
+   { ip[$1]++ }
+   END { for (i in ip)
+   print i, "has accessed ", ip[i], "times."
+   }
+
+-> awk -f count.awk access.log
+
+-> cat count.awk
+   BEGIN { FS=" ";print "Log access" }
+   { ip[$9]++ }
+   END { for (i in ip)
+   print i, "has accessed ", ip[i], "times."
+   }
+-> awk -f count.awk access.log
+
+-> cat count.awk
+   BEGIN { FS=" ";print "Log access" }
+   { ip[$1 2]++ }						// to check browser access
+   END { for (i in ip)
+   print i, "has accessed ", ip[i], "times."
+   }
+-> awk -f count.awk access.log
+
+* maximum browser access count
+
+-> BEGIN { FS=" "; print "Most Popular Browser" }
+   { browser[$12]++ }
+   END { for (b in browser)
+   if ( max < browser[b] ) {
+   max = browser[b];
+   maxbrowser = b; }
+   print "Most access was from ", maxbrowser, " and ", max, " times." }
+
+-> awk -f browser.awk access.log
+
+
+ 
+
+
+
+
